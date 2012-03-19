@@ -12,7 +12,7 @@ do
 	    -txcat-core/tags \
 	    http://xcat.svn.sourceforge.net/svnroot/xcat .
 done
-BRANCHES=$(git branch -a | grep remotes | cut -d'/' -f2-)
+BRANCHES=$(git branch -a | grep remotes | cut -d'/' -f2- | sort -r)
 git remote add origin git@github.com:dmlb2000/xcat-core.git
 for branch in $BRANCHES
 do
@@ -20,6 +20,4 @@ do
 	git checkout $branch
 	git push origin $b
 done
-git checkout trunk
-git push origin HEAD
 popd
