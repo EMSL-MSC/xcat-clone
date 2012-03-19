@@ -20,4 +20,6 @@ do
 	git checkout $branch
 	git push origin $b
 done
+git checkout trunk
+git push origin HEAD
 popd
