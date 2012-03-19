@@ -1,0 +1,23 @@
+#!/bin/bash -x
+
+mkdir -p xcat-core-svn
+pushd xcat-core-svn
+first=true
+while ! git svn info || [[ $first == 'true' ]]
+do
+	first=false
+	git svn clone \
+	    -Txcat-core/trunk \
+	    -bxcat-core/branches \
+	    -txcat-core/tags \
+	    http://xcat.svn.sourceforge.net/svnroot/xcat .
+done
+BRANCHES=$(git branch -a | grep remotes | cut -d'/' -f2-)
+git remote add origin git@github.com:dmlb2000/xcat-core.git
+for branch in $BRANCHES
+do
+	git branch $branch remotes/$branch
+	git checkout $branch
+	git push origin $b
+done
+popd
