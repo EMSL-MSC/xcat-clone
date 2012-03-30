@@ -28,7 +28,7 @@ mkdir -p ./.patches &&
 cp $PATCHES_DIR/* ./.patches/ &&
 cp $SERIES_FILE series &&
 quilt --quiltrc=/tmp/quiltrc series &&
-quilt --quiltrc=/tmp/quiltrc push &&
+quilt --quiltrc=/tmp/quiltrc push -a &&
 for arch in i386 x86_64
 do
   for package in xCAT xCATsn xCAT-nbroot
@@ -40,5 +40,5 @@ for package in perl-xCAT xCAT-client xCAT-IBMhpc xCAT-rmc xCAT-server xCAT-test
 do
   ./makerpm $package x86_64
 done &&
-quilt --quiltrc=/tmp/quiltrc pop &&
+quilt --quiltrc=/tmp/quiltrc pop -a &&
 popd
