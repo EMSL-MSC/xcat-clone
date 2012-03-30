@@ -1,0 +1,106 @@
+Index: a/xCAT-server/lib/xcat/plugins/dhcp.pm
+===================================================================
+--- a/xCAT-server/lib/xcat/plugins/dhcp.pm	(revision 12075)
++++ b/xCAT-server/lib/xcat/plugins/dhcp.pm	(working copy)
+@@ -48,22 +48,73 @@
+ my $chainents;
+ my $tftpdir = xCAT::Utils->getTftpDir();
+ use Math::BigInt;
+-my $dhcpconffile = $^O eq 'aix' ? '/etc/dhcpsd.cnf' : '/etc/dhcpd.conf'; 
++my ($dhcpconffile, $dhcp6conffile) = get_conffile(); 
++my ($dhcpleases, $dhcp6leases) = get_leasesfile(); 
+ my %dynamicranges; #track dynamic ranges defined to see if a host that resolves is actually a dynamic address
+ my %netcfgs;
+ my $distro = xCAT::Utils->osver();
+ 
+-# dhcp 4.x will use /etc/dhcp/dhcpd.conf as the config file
+-my $dhcp6conffile;
+-if ( $^O ne 'aix' and -d "/etc/dhcp" ) {
+-    $dhcpconffile = '/etc/dhcp/dhcpd.conf';
+-    $dhcp6conffile = '/etc/dhcp/dhcpd6.conf'; 
++sub get_conffile {
++    my $dhcpconffile="/etc/dhcpd.conf";
++    my $dhcp6conffile="/etc/dhcpd6.conf";
++    # is this ubuntu ?
++    if ( $distro =~ /ubuntu.*/ ){
++        $dhcpconffile="/etc/dhcp3/dhcpd.conf";
++    }
++    # dhcp 4.x will use /etc/dhcp/dhcpd.conf as the config file
++    if ( $^O ne 'aix' and -d "/etc/dhcp" ) {
++        $dhcpconffile = '/etc/dhcp/dhcpd.conf';
++        $dhcp6conffile = '/etc/dhcp/dhcpd6.conf'; 
++    }
++
++    my $sitetab = xCAT::Table->new('site');
++
++    unless ($sitetab)
++    {
++        my $rsp = {};
++        $rsp->{data}->[0] = "No site table found.\n";
++        xCAT::MsgUtils->message("E", $rsp, $callback, 1);
++    }
++
++    if ($sitetab) {
++        my ($ref) = $sitetab->getAttribs({key => 'dhcp6conf'}, 'value');
++        if ($ref and $ref->{value}) {
++            $dhcp6conffile = $ref->{value};
++        }
++        my ($ref) = $sitetab->getAttribs({key => 'dhcpconf'}, 'value');
++        if ($ref and $ref->{value}) {
++            $dhcpconffile = $ref->{value};
++        }
++    }
++
++    return ("$dhcpconffile", "$dhcp6conffile");
+ }
+-my $usingipv6;
+ 
+-# is this ubuntu ?
+-if ( $distro =~ /ubuntu.*/ ){
+-    $dhcpconffile = '/etc/dhcp3/dhcpd.conf';	
++sub get_leasesfile {
++    # default to whatever dhcpd runs normally
++    my $dhcpleases="";
++    my $dhcp6leases="";
++
++    my $sitetab = xCAT::Table->new('site');
++
++    unless ($sitetab)
++    {
++        my $rsp = {};
++        $rsp->{data}->[0] = "No site table found.\n";
++        xCAT::MsgUtils->message("E", $rsp, $callback, 1);
++    }
++
++    if ($sitetab) {
++        my ($ref) = $sitetab->getAttribs({key => 'dhcp6leases'}, 'value');
++        if ($ref and $ref->{value}) {
++            $dhcp6leases = $ref->{value};
++        }
++        my ($ref) = $sitetab->getAttribs({key => 'dhcpleases'}, 'value');
++        if ($ref and $ref->{value}) {
++            $dhcpleases = $ref->{value};
++        }
++    }
++    return ("$dhcpconffile", "$dhcp6conffile");
+ }
+ 
+ sub check_uefi_support {
+@@ -1110,6 +1161,17 @@
+                 if (/!remote!/) { next; }
+                 $ifarg .= " $_";
+             }
++            if ( $dhcpver == "dhcpd" ) {
++                if ( $dhcpleases != "" ) {
++                    $ifarg =. " -lf ".$dhcpleases;
++                }
++                $ifarg =. " -cf ".$dhcpconffile;
++            else if ( $dhcpver == "dhcpd6" ) {
++                $ifarg =. " -cf ".$dhcp6conffile;
++                if ( $dhcp6leases != "" ) {
++                    $ifarg =. " -lf ".$dhcp6leases;
++                }
++            }
+             $ifarg =~ s/^ //;
+             $ifarg .= "\"\n";
+ 
