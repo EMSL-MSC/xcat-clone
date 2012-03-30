@@ -1,0 +1,26 @@
+#!/bin/bash
+
+XCAT_SVN_ROOT=https://xcat.svn.sourceforge.net/svnroot/xcat
+XCAT_SVN_DIR=xcat-core/branches/2.7
+
+if [[ `whoami` != root ]]
+then
+	echo 'this should be run as root user'
+	exit -1
+fi
+
+pushd /tmp &&
+svn co $XCAT_SVN_ROOT/$XCAT_SVN_DIR $(dirname $XCAT_SVN_DIR) &&
+pushd $XCAT_SVN_DIR &&
+# apply patches here
+for arch in i386 x86_64
+do
+  for package in xCAT xCATsn xCAT-nbroot
+  do
+    ./makerpm $package $arch
+  done
+done &&
+for package in perl-xCAT xCAT-client xCAT-IBMhpc xCAT-rmc xCAT-server xCAT-test xCAT-UI
+  ./makerpm $package x86_64
+done &&
+popd
