@@ -10,7 +10,7 @@ then
 fi
 
 pushd /tmp &&
-svn co $XCAT_SVN_ROOT/$XCAT_SVN_DIR $(dirname $XCAT_SVN_DIR) &&
+svn co $XCAT_SVN_ROOT/$XCAT_SVN_DIR $XCAT_SVN_DIR &&
 pushd $XCAT_SVN_DIR &&
 # apply patches here
 for arch in i386 x86_64
