@@ -21,6 +21,7 @@ do
   done
 done &&
 for package in perl-xCAT xCAT-client xCAT-IBMhpc xCAT-rmc xCAT-server xCAT-test xCAT-UI
+do
   ./makerpm $package x86_64
 done &&
 popd
