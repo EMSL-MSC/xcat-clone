@@ -1,6 +1,8 @@
---- a/xCAT-server/lib/xcat/plugins/ddns.pm	2011-09-07 11:16:11.000000000 -0700
-+++ b/xCAT-server/lib/xcat/plugins/ddns.pm	2011-11-09 16:41:11.000000000 -0800
-@@ -418,6 +418,16 @@
+Index: a/xCAT-server/lib/xcat/plugins/ddns.pm
+===================================================================
+--- a/xCAT-server/lib/xcat/plugins/ddns.pm	(revision 12075)
++++ b/xCAT-server/lib/xcat/plugins/ddns.pm	(working copy)
+@@ -411,6 +411,16 @@
          my @forwarders = split /[ ,]/,$stab->{value};
          $ctx->{forwarders}=\@forwarders;
      }
@@ -17,12 +19,8 @@
      $ctx->{zonestotouch}->{$ctx->{domain}}=1;
  
      xCAT::SvrUtils::sendmsg("Getting reverse zones, this may take several minutes in scaling cluster.", $callback);
-@@ -785,10 +795,23 @@
-                 push @newnamed,$line;
-             }
-         }
--    }
-+    } 
+@@ -855,7 +865,20 @@
+     }
      unless ($gotoptions) {
          push @newnamed,"options {\n","\tdirectory \"".$ctx->{zonesdir}."\";\n";
 -	push @newnamed,"\t\t//listen-on-v6 { any; };\n";
