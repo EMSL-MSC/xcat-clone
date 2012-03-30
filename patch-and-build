@@ -40,5 +40,5 @@ for package in perl-xCAT xCAT-client xCAT-IBMhpc xCAT-rmc xCAT-server xCAT-test
 do
   ./makerpm $package x86_64
 done &&
-quilt --quiltrc=~/quiltrc pop &&
+quilt --quiltrc=/tmp/quiltrc pop &&
 popd
