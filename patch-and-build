@@ -3,6 +3,9 @@
 XCAT_SVN_ROOT=https://xcat.svn.sourceforge.net/svnroot/xcat
 XCAT_SVN_DIR=xcat-core/branches/2.7
 
+SERIES_FILE=`pwd`/series-2.7
+PATCHES_DIR=`pwd`/patches
+
 if [[ `whoami` != root ]]
 then
 	echo 'this should be run as root user'
@@ -10,9 +13,22 @@ then
 fi
 
 pushd /tmp &&
+export HOME=/tmp &&
+cat >> ~/.rpmmacros <<EOF
+%_rpmdir /tmp/xcat-core-snap
+EOF
+mkdir -p /tmp/xcat-core-snap
+cat >> /tmp/quiltrc <<EOF
+QUILT_PATCHES=.patches
+QUILT_PATCHES_PREFIX=yes
+EOF
 svn co $XCAT_SVN_ROOT/$XCAT_SVN_DIR $XCAT_SVN_DIR &&
 pushd $XCAT_SVN_DIR &&
-# apply patches here
+mkdir -p ./.patches &&
+cp $PATCHES_DIR/* ./.patches/ &&
+cp $SERIES_FILE series &&
+quilt --quiltrc=/tmp/quiltrc series &&
+quilt --quiltrc=/tmp/quiltrc push &&
 for arch in i386 x86_64
 do
   for package in xCAT xCATsn xCAT-nbroot
@@ -24,4 +40,5 @@ for package in perl-xCAT xCAT-client xCAT-IBMhpc xCAT-rmc xCAT-server xCAT-test
 do
   ./makerpm $package x86_64
 done &&
+quilt --quiltrc=~/quiltrc pop &&
 popd
