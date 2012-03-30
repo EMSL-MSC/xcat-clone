@@ -20,7 +20,7 @@ do
     ./makerpm $package $arch
   done
 done &&
-for package in perl-xCAT xCAT-client xCAT-IBMhpc xCAT-rmc xCAT-server xCAT-test xCAT-UI
+for package in perl-xCAT xCAT-client xCAT-IBMhpc xCAT-rmc xCAT-server xCAT-test
 do
   ./makerpm $package x86_64
 done &&
