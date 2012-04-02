@@ -1,14 +1,15 @@
 Index: a/xCAT-server/lib/xcat/plugins/dhcp.pm
 ===================================================================
---- a/xCAT-server/lib/xcat/plugins/dhcp.pm	(revision 12075)
+--- a/xCAT-server/lib/xcat/plugins/dhcp.pm	(revision 12077)
 +++ b/xCAT-server/lib/xcat/plugins/dhcp.pm	(working copy)
-@@ -48,22 +48,73 @@
+@@ -48,22 +48,74 @@
  my $chainents;
  my $tftpdir = xCAT::Utils->getTftpDir();
  use Math::BigInt;
 -my $dhcpconffile = $^O eq 'aix' ? '/etc/dhcpsd.cnf' : '/etc/dhcpd.conf'; 
-+my ($dhcpconffile, $dhcp6conffile) = get_conffile(); 
-+my ($dhcpleases, $dhcp6leases) = get_leasesfile(); 
++my ($dhcpconffile, $dhcp6conffile) = get_conffile();
++my ($dhcpleases, $dhcp6leases) = get_leasesfile();
++my $usingipv6;
  my %dynamicranges; #track dynamic ranges defined to see if a host that resolves is actually a dynamic address
  my %netcfgs;
  my $distro = xCAT::Utils->osver();
@@ -86,19 +87,19 @@ Index: a/xCAT-server/lib/xcat/plugins/dhcp.pm
  }
  
  sub check_uefi_support {
-@@ -1110,6 +1161,17 @@
+@@ -1110,6 +1162,17 @@
                  if (/!remote!/) { next; }
                  $ifarg .= " $_";
              }
-+            if ( $dhcpver == "dhcpd" ) {
-+                if ( $dhcpleases != "" ) {
-+                    $ifarg =. " -lf ".$dhcpleases;
++            if ( $dhcpver eq "dhcpd" ) {
++                if ( not $dhcpleases eq "" ) {
++                    $ifarg = " -lf ".$dhcpleases." ".$ifarg;
 +                }
-+                $ifarg =. " -cf ".$dhcpconffile;
-+            else if ( $dhcpver == "dhcpd6" ) {
-+                $ifarg =. " -cf ".$dhcp6conffile;
-+                if ( $dhcp6leases != "" ) {
-+                    $ifarg =. " -lf ".$dhcp6leases;
++                $ifarg = " -cf ".$dhcpconffile." ".$ifarg;
++            } elsif ( $dhcpver eq "dhcpd6" ) {
++                $ifarg = " -cf ".$dhcp6conffile." ".$ifarg;
++                if ( not $dhcp6leases eq "" ) {
++                    $ifarg = " -lf ".$dhcp6leases." ".$ifarg;
 +                }
 +            }
              $ifarg =~ s/^ //;
