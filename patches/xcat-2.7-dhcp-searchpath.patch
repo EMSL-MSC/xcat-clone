@@ -1,0 +1,60 @@
+--- a/xCAT-server/lib/xcat/plugins/dhcp.pm	(revision 12185)
++++ b/xCAT-server/lib/xcat/plugins/dhcp.pm	(working copy)
+@@ -1600,6 +1600,24 @@
+                    "    min-lease-time 43200;\n",
+                    "    default-lease-time 43200;\n",
+                    );
++
++    my $sitetab = xCAT::Table->new('site');
++    my $namesearchpath = "";
++
++    unless ($sitetab)
++    {
++        my $rsp = {};
++        $rsp->{data}->[0] = "No site table found.\n";
++        xCAT::MsgUtils->message("E", $rsp, $callback, 1);
++    }
++
++    if ($sitetab) {
++        my ($ref) = $sitetab->getAttribs({key => 'namesearchpath'}, 'value');
++        if ($ref and $ref->{value}) {
++            $namesearchpath = $ref->{value};
++        }
++    }
++
+     #for now, just do address allocatios (phase 1)
+     #phase 2 (by 2.6 presumably) will include the various things like DNS server and other options allowed by dhcpv6
+     #gateway is *not* currently allowed to be DHCP designated, router advertises its own self indpendent of dhcp.  We'll just keep it that way
+@@ -1611,7 +1629,8 @@
+     #posix timezone rfc 4833/tzdb timezone
+     #phase 3 will include whatever is required to do Netboot6.  That might be in the october timeframe for lack of implementations to test
+     #boot url/param (rfc 59070)
+-    push @netent, "    option domain-name \"".$netcfgs{$net}->{domain}."\";\n";
++    $namesearchpath .= $netcfgs{$net}->{domain};
++    push @netent, "    option domain-name \"".$namesearchpath."\";\n";
+     my $nameservers = $netcfgs{$net}->{nameservers};
+     if ($nameservers and $nameservers =~ /:/) {
+         push @netent,"    nameservers ".$netcfgs{$net}->{nameservers}.";\n";
+@@ -1692,6 +1711,8 @@
+ 
+         # if here, means we found the idx before which to insert
+         my $nettab = xCAT::Table->new("networks");
++        my $sitetab = xCAT::Table->new('site');
++        my $namesearchpath = "";
+         my $nameservers;
+         my $ntpservers;
+         my $logservers;
+@@ -1860,7 +1881,12 @@
+         }
+         if ($nameservers)
+         {
+-            push @netent, "    option domain-name \"$domain\";\n";
++            $namesearchpath = $domain;
++            my ($ref) = $sitetab->getAttribs({key => 'namesearchpath'}, 'value');
++            if ($ref and $ref->{value}) {
++                $namesearchpath .= $ref->{value};
++            }
++            push @netent, "    option domain-name \"$namesearchpath\";\n";
+             push @netent, "    option domain-name-servers  $nameservers;\n";
+         }
+         my $ddnserver = $nameservers;

@@ -1,0 +1,120 @@
+--- a/xCAT-server/share/xcat/cons/hpilo.expect	(revision 0)
++++ b/xCAT-server/share/xcat/cons/hpilo.expect	(revision 0)
+@@ -0,0 +1,34 @@
++#!/usr/bin/expect -f
++# 
++# © Copyright 2009 Hewlett-Packard Development Company, L.P.
++# EPL license http://www.eclipse.org/legal/epl-v10.html
++#
++# modified by evan felix
++#
++set timeout 15
++
++set host [lindex $argv 0]
++set username [lindex $argv 1]
++set password [lindex $argv 2]
++
++
++set send_slow {1 0.02}
++
++spawn ssh -l $username $host
++
++expect "password:"
++send -s "$password\r"
++
++expect "hpiLO->"
++sleep 1
++
++send -s "vsp"
++sleep 1
++
++send "\r"
++
++interact {
++        eof {   
++                exit
++        }
++}
+--- a/xCAT-server/share/xcat/cons/hpilo	(revision 0)
++++ b/xCAT-server/share/xcat/cons/hpilo	(revision 0)
+@@ -0,0 +1,74 @@
++#!/usr/bin/env perl
++# IBM(c) 2007 EPL license http://www.eclipse.org/legal/epl-v10.html
++use Fcntl qw(:DEFAULT :flock);
++sub get_lock {
++    unless (flock(LOCKHANDLE,LOCK_EX|LOCK_NB)) {
++        $| = 1;
++        print "Acquiring startup lock...";
++        flock(LOCKHANDLE,LOCK_EX) or die "Fatal Error securing startup lock";
++        print "done\n";
++    }
++    truncate(LOCKHANDLE,0);
++    print LOCKHANDLE $$."\n";
++}
++
++sub release_lock {
++    truncate(LOCKHANDLE,0);
++    flock(LOCKHANDLE,LOCK_UN);
++}
++BEGIN
++{
++    use Time::HiRes qw(sleep);
++    use File::Path;
++    use Fcntl qw(:DEFAULT :flock);
++    $::XCATROOT = $ENV{'XCATROOT'} ? $ENV{'XCATROOT'} : '/opt/xcat';
++    umask 0077;
++    mkpath("/tmp/xcat/");
++    unless (sysopen(LOCKHANDLE,"/tmp/xcat/consolelock",O_WRONLY | O_CREAT)) {
++        sleep 15;
++        print "Unable to open lock file";
++        exit 0;
++    }
++    get_lock();
++    #my $sleepint=int(rand(10));
++    #print "Opening console in ".(2+(0.5*$sleepint))." seconds...\n";
++    #sleep $sleepint;
++}
++my $sleepint=int(rand(10)); #Stagger start to avoid overwhelming conserver/xCATd
++$::XCATROOT = $ENV{'XCATROOT'} ? $ENV{'XCATROOT'} : '/opt/xcat';
++use lib "$::XCATROOT/lib/perl";
++require xCAT::Client;
++import File::Basename;
++my $scriptname = $0;
++my $username = 'USERID';
++my $password = 'PASSW0RD';
++my $node = $ARGV[0];
++my $bmc;
++sub getans {
++    my $rsp = shift; 
++    if ($rsp->{node}) {
++        $bmc = $rsp->{node}->[0]->{bmcaddr}->[0];
++        $username = $rsp->{node}->[0]->{bmcuser}->[0];
++        $password = $rsp->{node}->[0]->{bmcpass}->[0];
++    }
++}
++my $cmdref={
++    command=>"getipmicons",
++    arg=>"text",
++    noderange=>$ARGV[0]
++};
++xCAT::Client::submit_request($cmdref,\&getans);
++until ($username and $password and $bmc) {
++    release_lock(); #Let other clients have a go
++    $sleepint=10+int(rand(10));
++    print "Console not ready, retrying in $sleepint seconds (Ctrl-e,c,o to skip delay) \n";
++    sleep $sleepint;
++    get_lock();
++    xCAT::Client::submit_request($cmdref,\&getans);
++}
++release_lock();
++
++my $pathtochild = dirname($scriptname). "/";
++exec $pathtochild."hpilo.expect $bmc $username $password";
++  
++
+
+Property changes on: xCAT-server/share/xcat/cons/hpilo
+___________________________________________________________________
+Added: svn:executable
+   + *
+
