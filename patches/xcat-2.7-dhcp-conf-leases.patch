@@ -83,7 +83,7 @@ Index: a/xCAT-server/lib/xcat/plugins/dhcp.pm
 +            $dhcpleases = $ref->{value};
 +        }
 +    }
-+    return ("$dhcpconffile", "$dhcp6conffile");
++    return ("$dhcpleases", "$dhcp6leases");
  }
  
  sub check_uefi_support {
