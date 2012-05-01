@@ -30,7 +30,7 @@
      #phase 3 will include whatever is required to do Netboot6.  That might be in the october timeframe for lack of implementations to test
      #boot url/param (rfc 59070)
 -    push @netent, "    option domain-name \"".$netcfgs{$net}->{domain}."\";\n";
-+    $namesearchpath .= $netcfgs{$net}->{domain};
++    $namesearchpath .= $netcfgs{$net}->{domain}." ";
 +    push @netent, "    option domain-name \"".$namesearchpath."\";\n";
      my $nameservers = $netcfgs{$net}->{nameservers};
      if ($nameservers and $nameservers =~ /:/) {
