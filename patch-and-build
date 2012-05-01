@@ -36,7 +36,7 @@ do
     ./makerpm $package $arch
   done
 done &&
-./makerpm xCATsn ppc64 &&
+./makerpm xCAT-nbroot ppc64 &&
 for package in perl-xCAT xCAT-client xCAT-IBMhpc xCAT-rmc xCAT-server xCAT-test
 do
   ./makerpm $package x86_64
