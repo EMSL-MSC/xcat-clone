@@ -12,12 +12,17 @@ do
 	    -txcat-core/tags \
 	    http://xcat.svn.sourceforge.net/svnroot/xcat .
 done
-BRANCHES=$(git branch -a | grep remotes | cut -d'/' -f2- | sort -r)
+BRANCHES=$(git branch -a | grep remotes | grep -v tags | cut -d'/' -f2- | sort -r)
+TAGS=$(git branch -a | grep remotes | grep tags | cut -d'/' -f2- | sort -r)
 git remote add origin git@github.com:dmlb2000/xcat-core.git
 for branch in $BRANCHES
 do
-	git branch $branch remotes/$branch
-	git checkout $branch
-	git push origin $b
+	git push -u origin $branch
 done
+for tag in $TAGS
+do
+	git checkout $tag
+	git tag $tag -m "${tag/tags\//}"
+done
+git push --tags
 popd
