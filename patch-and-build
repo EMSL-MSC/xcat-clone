@@ -22,7 +22,7 @@ cat >> /tmp/quiltrc <<EOF
 QUILT_PATCHES=.patches
 QUILT_PATCHES_PREFIX=yes
 EOF
-svn co $XCAT_SVN_ROOT/$XCAT_SVN_DIR $XCAT_SVN_DIR &&
+svn co -r 12397 $XCAT_SVN_ROOT/$XCAT_SVN_DIR $XCAT_SVN_DIR &&
 pushd $XCAT_SVN_DIR &&
 mkdir -p ./.patches &&
 cp $PATCHES_DIR/* ./.patches/ &&
@@ -41,5 +41,6 @@ for package in perl-xCAT xCAT-client xCAT-IBMhpc xCAT-rmc xCAT-server xCAT-test
 do
   ./makerpm $package x86_64
 done &&
+./makegenesisbuilderrpm &&
 quilt --quiltrc=/tmp/quiltrc pop -a &&
 popd
