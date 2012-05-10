@@ -1,0 +1,28 @@
+diff --git a/xCAT-server/lib/xcat/plugins/ddns.pm b/xCAT-server/lib/xcat/plugins/ddns.pm
+index 32ddfe1..d625b9c 100644
+--- a/xCAT-server/lib/xcat/plugins/ddns.pm
++++ b/xCAT-server/lib/xcat/plugins/ddns.pm
+@@ -421,6 +421,11 @@ sub process_request {
+         my @named_listen_rules = split /[ ,]/,$stab->{value};
+         $ctx->{named_v6_listen_rules}=\@named_listen_rules;
+     }
++	$stab = $sitetab->getAttribs({key=>'extra_named_options'},['value']);
++	if ($stab and $stab->{value}) {
++		my @extra_named_options = split /,/,$stab->{value};
++		$ctx->{extra_named_options}=\@extra_named_options;
++	}
+     $ctx->{zonestotouch}->{$ctx->{domain}}=1;
+ 
+     xCAT::SvrUtils::sendmsg("Getting reverse zones, this may take several minutes in scaling cluster.", $callback);
+@@ -865,6 +870,11 @@ sub update_namedconf {
+     }
+     unless ($gotoptions) {
+         push @newnamed,"options {\n","\tdirectory \"".$ctx->{zonesdir}."\";\n";
++		if ($ctx->{extra_named_options}) {
++			foreach (@{$ctx->{extra_named_options}}) {
++				push @newnamed, "\t$_;\n";
++			}
++		}
+         if ($ctx->{named_v6_listen_rules}) {
+             push @newnamed, "\tlisten-on-v6 {\n";
+             foreach (@{$ctx->{named_v6_listen_rules}}) {
