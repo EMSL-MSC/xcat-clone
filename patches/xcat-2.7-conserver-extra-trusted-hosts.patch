@@ -1,5 +1,5 @@
 diff --git a/xCAT-server/lib/xcat/plugins/conserver.pm b/xCAT-server/lib/xcat/plugins/conserver.pm
-index 7626d0f..8bb1a37 100644
+index 7626d0f..d27dfe7 100644
 --- a/xCAT-server/lib/xcat/plugins/conserver.pm
 +++ b/xCAT-server/lib/xcat/plugins/conserver.pm
 @@ -228,6 +228,10 @@ sub docfheaders {
@@ -13,12 +13,3 @@ index 7626d0f..8bb1a37 100644
    # trust all the ip addresses configured on this node
    my @allips = xCAT::Utils->gethost_ips();
    my @ips = ();
-@@ -305,7 +309,7 @@ sub makeconservercf {
-   my $hmtab = xCAT::Table->new('nodehm');
-   my @cfgents1;# = $hmtab->getAllNodeAttribs(['cons','serialport','mgt','conserver','termserver','termport']);
-   if (($nodes and @$nodes > 0) or $req->{noderange}->[0]) {
--      @cfgents1 = $hmtab->getNodesAttribs($nodes,['node','cons','serialport','mgt','conserver','termserver','termport']);
-+      @cfgents1 = $hmtab->getNodesAttribs($nodes,['cons','serialport','mgt','conserver','termserver','termport']);
- #to make the result consistent to getAllNodeAttribs
-       my @tmpcfgents1;
-       foreach my $ent (@cfgents1)
