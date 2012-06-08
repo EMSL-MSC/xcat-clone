@@ -1,0 +1,30 @@
+Index: xCAT-server/lib/xcat/plugins/AAsn.pm
+===================================================================
+--- a/xCAT-server/lib/xcat/plugins/AAsn.pm	(revision 13052)
++++ b/xCAT-server/lib/xcat/plugins/AAsn.pm	(working copy)
+@@ -1294,7 +1294,7 @@
+     }
+ 
+     # enable the tftp-hpa
+-    $rc = enable_TFTPhpa();
++    $rc = enable_TFTPhpa($nodename);
+ 
+     if ($rc == 0)
+     {
+@@ -1358,6 +1358,7 @@
+ #-----------------------------------------------------------------------------
+ sub enable_TFTPhpa
+ {
++  my ($nodname) = @_;
+   # Check whether the tftp-hpa has been installed
+   unless (-x "/usr/sbin/in.tftpd" and -e "/etc/xinetd.d/tftp") {
+     xCAT::MsgUtils->message("S", "ERROR: The tftpd was not installed, enable the tftp failed.");
+@@ -1501,7 +1502,7 @@
+ 	while (@tftpprocs) {
+ 		sleep 0.1;
+ 	}
+-    	system("/usr/sbin/in.tftpd $v4only -v -l -s /tftpboot -m /etc/tftpmapfile4xcat.conf");
++    	system("/usr/sbin/in.tftpd $v4only -a $nodename -v -l -s /tftpboot -m /etc/tftpmapfile4xcat.conf");
+     }
+ 
+   return 0;
