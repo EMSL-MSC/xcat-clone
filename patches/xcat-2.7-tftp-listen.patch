@@ -2,6 +2,24 @@ Index: xCAT-server/lib/xcat/plugins/AAsn.pm
 ===================================================================
 --- a/xCAT-server/lib/xcat/plugins/AAsn.pm	(revision 13052)
 +++ b/xCAT-server/lib/xcat/plugins/AAsn.pm	(working copy)
+@@ -266,6 +266,8 @@
+     }
+     else     # management node
+     {
++        my @nodeinfo   = xCAT::Utils->determinehostname;
++        my $nodename   = pop @nodeinfo;                    # get hostname
+ 
+         # $rc = &setup_NTPmn();  # setup NTP on the Management Node
+         if (xCAT::Utils->isLinux())
+@@ -277,7 +279,7 @@
+                 $rc = &setup_FTP();    # setup FTP
+             }
+             #enable the tftp-hpa for MN
+-            $rc = enable_TFTPhpa();
++            $rc = enable_TFTPhpa($nodename);
+         }
+     }
+     return $rc;
 @@ -1294,7 +1294,7 @@
      }
  
@@ -15,15 +33,19 @@ Index: xCAT-server/lib/xcat/plugins/AAsn.pm
  #-----------------------------------------------------------------------------
  sub enable_TFTPhpa
  {
-+  my ($nodname) = @_;
++  my ($nodename) = @_;
    # Check whether the tftp-hpa has been installed
    unless (-x "/usr/sbin/in.tftpd" and -e "/etc/xinetd.d/tftp") {
      xCAT::MsgUtils->message("S", "ERROR: The tftpd was not installed, enable the tftp failed.");
-@@ -1501,7 +1502,7 @@
+@@ -1501,7 +1502,11 @@
  	while (@tftpprocs) {
  		sleep 0.1;
  	}
 -    	system("/usr/sbin/in.tftpd $v4only -v -l -s /tftpboot -m /etc/tftpmapfile4xcat.conf");
++       my $tmp = xCAT::Utils->get_site_attribute('tftplisten');
++       if ( $tmp ) {
++           $nodename = $tmp;
++       }
 +    	system("/usr/sbin/in.tftpd $v4only -a $nodename -v -l -s /tftpboot -m /etc/tftpmapfile4xcat.conf");
      }
  

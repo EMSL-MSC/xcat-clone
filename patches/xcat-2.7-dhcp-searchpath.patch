@@ -1,25 +1,13 @@
 --- a/xCAT-server/lib/xcat/plugins/dhcp.pm	(revision 12185)
 +++ b/xCAT-server/lib/xcat/plugins/dhcp.pm	(working copy)
-@@ -1600,6 +1600,24 @@
+@@ -1600,6 +1600,12 @@
                     "    min-lease-time 43200;\n",
                     "    default-lease-time 43200;\n",
                     );
 +
-+    my $sitetab = xCAT::Table->new('site');
-+    my $namesearchpath = "";
-+
-+    unless ($sitetab)
-+    {
-+        my $rsp = {};
-+        $rsp->{data}->[0] = "No site table found.\n";
-+        xCAT::MsgUtils->message("E", $rsp, $callback, 1);
-+    }
-+
-+    if ($sitetab) {
-+        my ($ref) = $sitetab->getAttribs({key => 'namesearchpath'}, 'value');
-+        if ($ref and $ref->{value}) {
-+            $namesearchpath = $ref->{value};
-+        }
++    my $namesearchpath = xCAT::Utils->get_site_attribute('namesearchpath');
++    if ( ! $namesearchpath) {
++        $namesearchpath = "";
 +    }
 +
      #for now, just do address allocatios (phase 1)
@@ -34,11 +22,10 @@
      my $nameservers = $netcfgs{$net}->{nameservers};
      if ($nameservers and $nameservers =~ /:/) {
          push @netent,"    nameservers ".$netcfgs{$net}->{nameservers}.";\n";
-@@ -1692,6 +1711,8 @@
+@@ -1692,6 +1711,7 @@
  
          # if here, means we found the idx before which to insert
          my $nettab = xCAT::Table->new("networks");
-+        my $sitetab = xCAT::Table->new('site');
 +        my $namesearchpath = "";
          my $nameservers;
          my $ntpservers;
@@ -49,9 +36,9 @@
          {
 -            push @netent, "    option domain-name \"$domain\";\n";
 +            $namesearchpath = $domain;
-+            my ($ref) = $sitetab->getAttribs({key => 'namesearchpath'}, 'value');
-+            if ($ref and $ref->{value}) {
-+                $namesearchpath .= " ".$ref->{value};
++            my $tmp = xCAT::Utils->get_site_attribute('namesearchpath');
++            if ($tmp) {
++                $namesearchpath .= " ".$tmp;
 +            }
 +            push @netent, "    option domain-name \"$namesearchpath\";\n";
              push @netent, "    option domain-name-servers  $nameservers;\n";
