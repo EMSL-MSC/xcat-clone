@@ -1,0 +1,11 @@
+--- a/xCAT-server/share/xcat/netboot/add-on/statelite/rc.statelite	(revision 12397)
++++ b/xCAT-server/share/xcat/netboot/add-on/statelite/rc.statelite	(working copy)
+@@ -148,7 +148,7 @@
+ 		mkdir -p ${TREEMOUNT}/${SERV}/${MNT}
+ 		MAX=15
+ 		TRIES=1
+-		while ! mount $SERV:$MNT ${TREEMOUNT}/${SERV}/${MNT} -r -n -o nolock,tcp
++		while ! mount $SERV:$MNT ${TREEMOUNT}/${SERV}/${MNT} -r -n -o nolock,rsize=1024,udp,nfsvers=3,timeo=12,retrans=50,ro
+ 		do
+ 			if [ "$TRIES" = "$MAX" ]; then
+ 				echo "Can't mount $i.  I give up.. ">/dev/console
