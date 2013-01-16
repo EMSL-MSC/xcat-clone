@@ -33,13 +33,13 @@ for arch in i386 x86_64
 do
   for package in xCAT xCATsn xCAT-nbroot
   do
-    ./makerpm $package $arch
+    ./makerpm $package $arch || exit -1
   done
 done &&
 ./makerpm xCAT-nbroot ppc64 &&
 for package in perl-xCAT xCAT-client xCAT-IBMhpc xCAT-rmc xCAT-server xCAT-test
 do
-  ./makerpm $package x86_64
+  ./makerpm $package x86_64 || exit -1
 done &&
 ./makegenesisbuilderrpm &&
 quilt --quiltrc=/tmp/quiltrc pop -a &&
