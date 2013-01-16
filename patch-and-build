@@ -22,7 +22,7 @@ cat >> /tmp/quiltrc <<EOF
 QUILT_PATCHES=.patches
 QUILT_PATCHES_PREFIX=yes
 EOF
-svn co -r 12397 $XCAT_SVN_ROOT/$XCAT_SVN_DIR $XCAT_SVN_DIR &&
+svn co -r 13343 $XCAT_SVN_ROOT/$XCAT_SVN_DIR $XCAT_SVN_DIR &&
 pushd $XCAT_SVN_DIR &&
 mkdir -p ./.patches &&
 cp $PATCHES_DIR/* ./.patches/ &&
