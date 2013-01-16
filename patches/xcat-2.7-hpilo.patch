@@ -1,5 +1,5 @@
---- a/xCAT-server/lib/xcat/plugins/xCAT_plugin/hpilo.pm	2013-01-16 12:39:35.287902703 -0800
-+++ b/xCAT-server/lib/xcat/plugins/xCAT_plugin/hpilo.pm	2013-01-16 13:18:34.525688620 -0800
+--- a/xCAT-server/lib/xcat/plugins/hpilo.pm	2013-01-16 12:39:35.287902703 -0800
++++ b/xCAT-server/lib/xcat/plugins/hpilo.pm	2013-01-16 13:18:34.525688620 -0800
 @@ -74,7 +74,8 @@
      rpower => 'nodehm:power,mgt',
      rvitals => 'nodehm:mgt',
