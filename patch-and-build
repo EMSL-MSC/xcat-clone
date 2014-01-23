@@ -1,9 +1,9 @@
 #!/bin/bash
 
 XCAT_SVN_ROOT=https://svn.code.sf.net/p/xcat/code
-XCAT_SVN_DIR=xcat-core/branches/2.7
+XCAT_SVN_DIR=xcat-core/branches/2.8
 
-SERIES_FILE=`pwd`/series-2.7
+SERIES_FILE=`pwd`/series-2.8
 PATCHES_DIR=`pwd`/patches
 
 if [[ `whoami` != root ]]
@@ -22,7 +22,7 @@ cat >> /tmp/quiltrc <<EOF
 QUILT_PATCHES=.patches
 QUILT_PATCHES_PREFIX=yes
 EOF
-svn co -r 13875 $XCAT_SVN_ROOT/$XCAT_SVN_DIR $XCAT_SVN_DIR &&
+svn co -r 17035 $XCAT_SVN_ROOT/$XCAT_SVN_DIR $XCAT_SVN_DIR &&
 pushd $XCAT_SVN_DIR &&
 mkdir -p ./.patches &&
 cp $PATCHES_DIR/* ./.patches/ &&
