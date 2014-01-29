@@ -1,0 +1,15 @@
+diff --git a/xCAT-server/lib/xcat/plugins/conserver.pm b/xCAT-server/lib/xcat/plugins/conserver.pm
+index 7626d0f..d27dfe7 100644
+--- a/xCAT-server/lib/xcat/plugins/conserver.pm
++++ b/xCAT-server/lib/xcat/plugins/conserver.pm
+@@ -228,6 +228,10 @@ sub docfheaders {
+   push @newheaders,"  trusted 127.0.0.1;\n";
+   my $master=xCAT::TableUtils->get_site_Master();
+   push @newheaders, "  trusted $master;\n";
++  my $conserver_trusted = xCAT::Utils->get_site_attribute("conserver_trusted");
++  if ($conserver_trusted) {
++    push @newheaders, "  trusted $conserver_trusted;\n";
++  }
+   # trust all the ip addresses configured on this node
+   my @allips = xCAT::NetworkUtils->gethost_ips();
+   my @ips = ();
