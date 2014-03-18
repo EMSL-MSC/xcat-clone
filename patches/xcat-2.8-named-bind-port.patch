@@ -6,14 +6,14 @@ Index: a/xCAT-server/lib/xcat/plugins/ddns.pm
          my @forwarders = split /[ ,]/,$site_entry;
          $ctx->{forwarders}=\@forwarders;
      }
-+    $stab = $sitetab->getAttribs({key=>'named_listen_rules'},['value']);
-+    if ($stab and $stab->{value}) {
-+        my @named_listen_rules = split /[ ,]/,$stab->{value};
++    $stab = xCAT::TableUtils->get_site_attribute('named_listen_rules');
++    if ($stab) {
++        my @named_listen_rules = split /[ ,]/,$stab;
 +        $ctx->{named_listen_rules}=\@named_listen_rules;
 +    }
-+    $stab = $sitetab->getAttribs({key=>'named_v6_listen_rules'},['value']);
-+    if ($stab and $stab->{value}) {
-+        my @named_listen_rules = split /[ ,]/,$stab->{value};
++    $stab = xCAT::TableUtils->get_site_attribute('named_v6_listen_rules');
++    if ($stab) {
++        my @named_listen_rules = split /[ ,]/,$stab;
 +        $ctx->{named_v6_listen_rules}=\@named_listen_rules;
 +    }
  

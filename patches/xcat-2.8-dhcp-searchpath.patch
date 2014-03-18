@@ -5,7 +5,7 @@
                     "    default-lease-time $dhcplease;\n",
                     );
 +
-+    my $namesearchpath = xCAT::Utils->get_site_attribute('namesearchpath');
++    my $namesearchpath = xCAT::TableUtils->get_site_attribute('namesearchpath');
 +    if ( ! $namesearchpath) {
 +        $namesearchpath = "";
 +    }
@@ -36,7 +36,7 @@
          {
 -            push @netent, "    option domain-name \"$domain\";\n";
 +            $namesearchpath = $domain;
-+            my $tmp = xCAT::Utils->get_site_attribute('namesearchpath');
++            my $tmp = xCAT::TableUtils->get_site_attribute('namesearchpath');
 +            if ($tmp) {
 +                $namesearchpath .= " ".$tmp;
 +            }
