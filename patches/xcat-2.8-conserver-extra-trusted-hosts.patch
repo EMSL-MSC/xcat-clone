@@ -6,7 +6,7 @@ index 7626d0f..d27dfe7 100644
    push @newheaders,"  trusted 127.0.0.1;\n";
    my $master=xCAT::TableUtils->get_site_Master();
    push @newheaders, "  trusted $master;\n";
-+  my $conserver_trusted = xCAT::Utils->get_site_attribute("conserver_trusted");
++  my $conserver_trusted = xCAT::TableUtils->get_site_attribute("conserver_trusted");
 +  if ($conserver_trusted) {
 +    push @newheaders, "  trusted $conserver_trusted;\n";
 +  }
