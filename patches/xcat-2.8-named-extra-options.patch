@@ -6,9 +6,9 @@ index 32ddfe1..d625b9c 100644
          my @named_listen_rules = split /[ ,]/,$stab->{value};
          $ctx->{named_v6_listen_rules}=\@named_listen_rules;
      }
-+	$stab = $sitetab->getAttribs({key=>'extra_named_options'},['value']);
-+	if ($stab and $stab->{value}) {
-+		my @extra_named_options = split /,/,$stab->{value};
++	my $stab = xCAT::TableUtils->get_site_attribute('extra_named_options');
++	if ($stab) {
++		my @extra_named_options = split /,/,$stab;
 +		$ctx->{extra_named_options}=\@extra_named_options;
 +	}
  
