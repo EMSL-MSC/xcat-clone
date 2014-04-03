@@ -2,7 +2,7 @@ Index: a/xCAT-server/lib/xcat/plugins/ddns.pm
 ===================================================================
 --- a/xCAT-server/lib/xcat/plugins/ddns.pm	(revision 12075)
 +++ b/xCAT-server/lib/xcat/plugins/ddns.pm	(working copy)
-@@ -411,6 +411,16 @@
+@@ -482,7 +482,18 @@
          my @forwarders = split /[ ,]/,$site_entry;
          $ctx->{forwarders}=\@forwarders;
      }
@@ -17,10 +17,11 @@ Index: a/xCAT-server/lib/xcat/plugins/ddns.pm
 +        $ctx->{named_v6_listen_rules}=\@named_listen_rules;
 +    }
  
++
      $ctx->{zonestotouch}->{$ctx->{domain}}=1;
  	foreach (@networks) {
- 		 if ($_->{domain}) {
-@@ -855,7 +865,20 @@
+ 		if ($_->{domain}) {
+@@ -904,7 +915,20 @@
      }
      unless ($gotoptions) {
          push @newnamed,"options {\n","\tdirectory \"".$ctx->{zonesdir}."\";\n";
@@ -28,14 +29,14 @@ Index: a/xCAT-server/lib/xcat/plugins/ddns.pm
 +        if ($ctx->{named_v6_listen_rules}) {
 +            push @newnamed, "\tlisten-on-v6 {\n";
 +            foreach (@{$ctx->{named_v6_listen_rules}}) {
-+				push @newnamed, "\t\t$_;\n";
++                               push @newnamed, "\t\t$_;\n";
 +            }
 +            push @newnamed, "\t};\n";
 +        }
 +        if ($ctx->{named_listen_rules}) {
 +            push @newnamed, "\tlisten-on {\n";
 +            foreach (@{$ctx->{named_listen_rules}}) {
-+				push @newnamed, "\t\t$_;\n";
++                               push @newnamed, "\t\t$_;\n";
 +            }
 +            push @newnamed, "\t};\n";
 +        }
