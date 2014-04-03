@@ -1,0 +1,10 @@
+--- a/xCAT-server/lib/xcat/plugins/ddns.pm	2014-04-03 16:35:11.661171826 -0700
++++ b/xCAT-server/lib/xcat/plugins/ddns.pm	2014-04-03 16:35:16.254181380 -0700
+@@ -920,6 +920,7 @@
+     }
+     unless ($gotoptions) {
+         push @newnamed,"options {\n","\tdirectory \"".$ctx->{zonesdir}."\";\n";
++        push @newnamed,"\tallow-query { any; };\n";
+         if ($ctx->{named_v6_listen_rules}) {
+             push @newnamed, "\tlisten-on-v6 {\n";
+             foreach (@{$ctx->{named_v6_listen_rules}}) {
