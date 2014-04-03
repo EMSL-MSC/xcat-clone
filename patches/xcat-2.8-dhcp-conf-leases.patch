@@ -20,8 +20,8 @@ Index: a/xCAT-server/lib/xcat/plugins/dhcp.pm
 -    $dhcpconffile = '/etc/dhcp/dhcpd.conf';
 -    $dhcp6conffile = '/etc/dhcp/dhcpd6.conf'; 
 +sub get_conffile {
-+    my $dhcp6conffile = xCAT::Utils->get_site_attribute('dhcp6conf');
-+    my $dhcpconffile = xCAT::Utils->get_site_attribute('dhcpconf');
++    my $dhcp6conffile = xCAT::TableUtils->get_site_attribute('dhcp6conf');
++    my $dhcpconffile = xCAT::TableUtils->get_site_attribute('dhcpconf');
 +    if ( ! $dhcpconffile )
 +    {
 +        $dhcpconffile="/etc/dhcpd.conf";
@@ -52,8 +52,8 @@ Index: a/xCAT-server/lib/xcat/plugins/dhcp.pm
 -    if (-e '/etc/dhcp/') {
 -        $dhcpconffile = '/etc/dhcp/dhcpd.conf';
 +sub get_leasesfile {
-+    my $dhcp6leases = xCAT::Utils->get_site_attribute('dhcp6leases');
-+    my $dhcpleases = xCAT::Utils->get_site_attribute('dhcpleases');
++    my $dhcp6leases = xCAT::TableUtils->get_site_attribute('dhcp6leases');
++    my $dhcpleases = xCAT::TableUtils->get_site_attribute('dhcpleases');
 +    # default to whatever dhcpd runs normally
 +    if ( ! $dhcpleases )
 +    {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-XCAT_SVN_ROOT=https://svn.code.sf.net/p/xcat/code
+XCAT_SVN_ROOT=http://svn.code.sf.net/p/xcat/code
 XCAT_SVN_DIR=xcat-core/branches/2.8
 
 SERIES_FILE=`pwd`/series-2.8
