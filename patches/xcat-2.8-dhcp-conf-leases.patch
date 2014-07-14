@@ -1,15 +1,14 @@
-Index: a/xCAT-server/lib/xcat/plugins/dhcp.pm
-===================================================================
---- a/xCAT-server/lib/xcat/plugins/dhcp.pm	(revision 12077)
-+++ b/xCAT-server/lib/xcat/plugins/dhcp.pm	(working copy)
-@@ -53,27 +53,54 @@
+diff --git a/xCAT-server/lib/xcat/plugins/dhcp.pm b/xCAT-server/lib/xcat/plugins/dhcp.pm
+index e86bb20..81bcc8c 100755
+--- a/xCAT-server/lib/xcat/plugins/dhcp.pm
++++ b/xCAT-server/lib/xcat/plugins/dhcp.pm
+@@ -53,31 +53,56 @@ my $nodetypeents;
  my $chainents;
  my $tftpdir = xCAT::TableUtils->getTftpDir();
  use Math::BigInt;
 -my $dhcpconffile = $^O eq 'aix' ? '/etc/dhcpsd.cnf' : '/etc/dhcpd.conf'; 
 +my ($dhcpconffile, $dhcp6conffile) = get_conffile();
 +my ($dhcpleases, $dhcp6leases) = get_leasesfile();
-+my $usingipv6;
  my %dynamicranges; #track dynamic ranges defined to see if a host that resolves is actually a dynamic address
  my %netcfgs;
  my $distro = xCAT::Utils->osver();
@@ -19,6 +18,12 @@ Index: a/xCAT-server/lib/xcat/plugins/dhcp.pm
 -if ( $^O ne 'aix' and -d "/etc/dhcp" ) {
 -    $dhcpconffile = '/etc/dhcp/dhcpd.conf';
 -    $dhcp6conffile = '/etc/dhcp/dhcpd6.conf'; 
+-}
+ my $usingipv6;
+ 
+ # define usage statement
+ my $usage="Usage: makedhcp -n\n\tmakedhcp -a\n\tmakedhcp -a -d\n\tmakedhcp -d noderange\n\tmakedhcp <noderange> [-s statements]\n\tmakedhcp -q\n\tmakedhcp [-h|--help]";
+ 
 +sub get_conffile {
 +    my $dhcp6conffile = xCAT::TableUtils->get_site_attribute('dhcp6conf');
 +    my $dhcpconffile = xCAT::TableUtils->get_site_attribute('dhcpconf');
@@ -42,10 +47,8 @@ Index: a/xCAT-server/lib/xcat/plugins/dhcp.pm
 +            $dhcp6conffile = '/etc/dhcp/dhcpd6.conf';
 +        }
 +    }
-+
 +    return ("$dhcpconffile", "$dhcp6conffile");
- }
--my $usingipv6;
++}
  
 -# is this ubuntu ?
 -if ( $distro =~ /ubuntu.*/ ){
@@ -65,12 +68,11 @@ Index: a/xCAT-server/lib/xcat/plugins/dhcp.pm
 +    {
 +        $dhcp6leases="";
      }
-+
 +    return ("$dhcpleases", "$dhcp6leases");
  }
  
  sub check_uefi_support {
-@@ -1106,6 +1158,17 @@
+@@ -1512,6 +1537,17 @@ sub process_request
              }
  
              my $ifarg = "$dhcpd_key=\"";
