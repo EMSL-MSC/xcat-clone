@@ -1,7 +1,7 @@
 #!/bin/bash
 
-XCAT_SVN_ROOT=http://svn.code.sf.net/p/xcat/code
-XCAT_SVN_DIR=xcat-core/branches/2.8
+XCAT_GIT_ROOT=http://git.code.sf.net/p/xcat/xcat-core
+XCAT_GIT_BRANCH=2.8
 
 SERIES_FILE=`pwd`/series-2.8
 PATCHES_DIR=`pwd`/patches
@@ -22,8 +22,9 @@ cat >> /tmp/quiltrc <<EOF
 QUILT_PATCHES=.patches
 QUILT_PATCHES_PREFIX=yes
 EOF
-svn co -r 17035 $XCAT_SVN_ROOT/$XCAT_SVN_DIR $XCAT_SVN_DIR &&
-pushd $XCAT_SVN_DIR &&
+git clone $XCAT_GIT_ROOT &&
+pushd xcat-core &&
+git checkout 2.8
 mkdir -p ./.patches &&
 cp $PATCHES_DIR/* ./.patches/ &&
 cp $SERIES_FILE series &&
