@@ -2,7 +2,7 @@ Index: a/xCAT-server/lib/xcat/plugins/ddns.pm
 ===================================================================
 --- a/xCAT-server/lib/xcat/plugins/ddns.pm	(revision 12075)
 +++ b/xCAT-server/lib/xcat/plugins/ddns.pm	(working copy)
-@@ -482,7 +482,18 @@
+@@ -482,6 +482,16 @@
          my @forwarders = split /[ ,]/,$site_entry;
          $ctx->{forwarders}=\@forwarders;
      }
@@ -16,16 +16,14 @@ Index: a/xCAT-server/lib/xcat/plugins/ddns.pm
 +        my @named_listen_rules = split /[ ,]/,$stab;
 +        $ctx->{named_v6_listen_rules}=\@named_listen_rules;
 +    }
- 
-+
-     $ctx->{zonestotouch}->{$ctx->{domain}}=1;
- 	foreach (@networks) {
- 		if ($_->{domain}) {
+
+     my @slave_ips;
+     my $dns_slaves = get_dns_slave();
 @@ -904,7 +915,20 @@
-     }
-     unless ($gotoptions) {
-         push @newnamed,"options {\n","\tdirectory \"".$ctx->{zonesdir}."\";\n";
--	push @newnamed,"\t\t//listen-on-v6 { any; };\n";
+            push @newnamed,"\tdirectory \"".$ctx->{zonesdir}."\";\n";
+            push @newnamed, "\tallow-recursion { any; };\n";
+         }
+-        push @newnamed,"\t\t//listen-on-v6 { any; };\n";
 +        if ($ctx->{named_v6_listen_rules}) {
 +            push @newnamed, "\tlisten-on-v6 {\n";
 +            foreach (@{$ctx->{named_v6_listen_rules}}) {
